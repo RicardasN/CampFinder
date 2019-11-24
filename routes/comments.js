@@ -99,8 +99,9 @@ router.put('/:id/comments/:comment_id', auth, async (req, res) => {
   try {
     let comment = await Comment.findById(req.params.comment_id);
     if (!comment) return res.status(404).json({ msg: 'Comment not found' });
-    //Make sure user owns the comment
-    if (comment.author.toString() !== req.user.id) {
+    const user = await User.findById(req.user.id).select('-password');
+    //Make sure user owns the campground
+    if (campground.author.toString() !== req.user.id && !user.isAdmin) {
       return res
         .status(401)
         .json({ msg: 'Not authorized to access this resource' });
@@ -124,8 +125,9 @@ router.delete('/:id/comments/:comment_id', auth, async (req, res) => {
   try {
     let comment = await Comment.findById(req.params.comment_id);
     if (!comment) return res.status(404).json({ msg: 'Comment not found' });
-    //Make sure user own the campground
-    if (comment.author.toString() !== req.user.id) {
+    const user = await User.findById(req.user.id).select('-password');
+    //Make sure user owns the campground
+    if (campground.author.toString() !== req.user.id && !user.isAdmin) {
       return res
         .status(401)
         .json({ msg: 'Not authorized to access this resource' });

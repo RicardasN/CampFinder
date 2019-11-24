@@ -103,7 +103,9 @@ router.put(
       let reply = await Reply.findById(req.params.reply_id);
       if (!reply) return res.status(404).json({ msg: 'Reply not found' });
       //Make sure user owns the reply
-      if (reply.author.toString() !== req.user.id) {
+      const user = await User.findById(req.user.id).select('-password');
+      //Make sure user owns the campground
+      if (campground.author.toString() !== req.user.id && !user.isAdmin) {
         return res
           .status(401)
           .json({ msg: 'Not authorized to access this resource' });
@@ -132,7 +134,9 @@ router.delete(
       let reply = await Reply.findById(req.params.reply_id);
       if (!reply) return res.status(404).json({ msg: 'Comment not found' });
       //Make sure user own the campground
-      if (reply.author.toString() !== req.user.id) {
+      const user = await User.findById(req.user.id).select('-password');
+      //Make sure user owns the campground
+      if (campground.author.toString() !== req.user.id && !user.isAdmin) {
         return res
           .status(401)
           .json({ msg: 'Not authorized to access this resource' });
