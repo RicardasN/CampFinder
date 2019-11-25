@@ -3,7 +3,7 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 const { check, validationResult } = require('express-validator');
 
-var Campground = require('../models/Campground');
+var User = require('../models/User');
 var Reply = require('../models/Reply');
 var Comment = require('../models/Comment');
 

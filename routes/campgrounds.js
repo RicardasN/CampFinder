@@ -6,6 +6,8 @@ const { check, validationResult } = require('express-validator');
 var Campground = require('../models/Campground');
 var Review = require('../models/Review');
 var Comment = require('../models/Comment');
+var User = require('../models/User');
+
 
 // @route       GET   api/campgrounds
 // @desc        Get all campgrounds

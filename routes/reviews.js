@@ -5,6 +5,7 @@ const { check, validationResult } = require('express-validator');
 
 var Campground = require('../models/Campground');
 var Review = require('../models/Review');
+var User = require('../models/User');
 
 // @route       GET   api/campgrounds/:id/reviews
 // @desc        Get all campground's reviews

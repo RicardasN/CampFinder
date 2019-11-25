@@ -6,6 +6,7 @@ const { check, validationResult } = require('express-validator');
 var Campground = require('../models/Campground');
 var Comment = require('../models/Comment');
 var Reply = require('../models/Reply');
+var User = require('../models/User');
 
 // @route       GET   api/campgrounds/:id/comments
 // @desc        Get all campground's comments
@@ -100,8 +101,8 @@ router.put('/:id/comments/:comment_id', auth, async (req, res) => {
     let comment = await Comment.findById(req.params.comment_id);
     if (!comment) return res.status(404).json({ msg: 'Comment not found' });
     const user = await User.findById(req.user.id).select('-password');
-    //Make sure user owns the campground
-    if (campground.author.toString() !== req.user.id && !user.isAdmin) {
+    //Make sure user owns the comment
+    if (comment.author.toString() !== req.user.id && !user.isAdmin) {
       return res
         .status(401)
         .json({ msg: 'Not authorized to access this resource' });

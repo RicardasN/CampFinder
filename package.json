@@ -1,5 +1,5 @@
 {
-  "name": "contact-keeper",
+  "name": "yelp-camp",
   "version": "1.0.0",
   "description": "This is an app for learning React, it will also have a backend with express and mongoDB",
   "main": "app.js",
