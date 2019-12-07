@@ -1,5 +1,5 @@
 const express = require('express');
-const connectDB = require('./config/db');
+const connectDB = require('./config/db').connectDB;
 
 const authRoutes = require('./routes/auth');
 const usersRoutes = require('./routes/users');
@@ -34,4 +34,6 @@ app.use(function(req, res) {
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+module.exports = app.listen(PORT, () =>
+  console.log(`Server started on port ${PORT}`)
+);

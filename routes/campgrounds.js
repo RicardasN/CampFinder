@@ -8,7 +8,6 @@ var Review = require('../models/Review');
 var Comment = require('../models/Comment');
 var User = require('../models/User');
 
-
 // @route       GET   api/campgrounds
 // @desc        Get all campgrounds
 // @access      Public
@@ -84,6 +83,10 @@ router.post(
 // @access      Public
 router.get('/:id', async function(req, res) {
   try {
+    //is ID valid?
+    if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(404).json({ message: 'Cant find the campground' });
+    }
     //find the campground with provided ID
     let campground = await Campground.findById(req.params.id);
     /*.populate({
@@ -105,7 +108,7 @@ router.get('/:id', async function(req, res) {
     res.json(campground);
   } catch (error) {
     console.error(error.message);
-    res.status(500).send('Server Error');
+    res.status(500).json({ msg: 'Server Error' });
   }
 });
 
@@ -113,6 +116,10 @@ router.get('/:id', async function(req, res) {
 // @desc        Update a campground
 // @access      Private
 router.put('/:id', auth, async (req, res) => {
+  //is ID valid?
+  if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+    return res.status(404).json({ message: 'Cant find the campground' });
+  }
   const { name, image, description, price, location } = req.body;
   //Build campground object
   const campgroundFields = {};
@@ -148,6 +155,10 @@ router.put('/:id', auth, async (req, res) => {
 // @desc        Delete a campground
 // @access      Private
 router.delete('/:id', auth, async (req, res) => {
+  //is ID valid?
+  if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+    return res.status(404).json({ message: 'Cant find the campground' });
+  }
   try {
     let campground = await Campground.findById(req.params.id);
     if (!campground)

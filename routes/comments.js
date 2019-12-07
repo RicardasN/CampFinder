@@ -23,7 +23,6 @@ router.get('/:id/comments', async (req, res) => {
         }
       })
       .exec();
-    console.log(req.params.id);
     if (campground.comments == null || campground.comments.length < 1) {
       return res
         .status(404)
@@ -77,10 +76,14 @@ router.post(
 // @desc        Get a specific comment
 // @access      Public
 router.get('/:id/comments/:comment_id', async function(req, res) {
+  //is ID valid?
+  if (!req.params.comment_id.match(/^[0-9a-fA-F]{24}$/)) {
+    return res.status(404).json({ msg: 'Comment not found' });
+  }
   try {
     let comment = await Comment.findById(req.params.comment_id);
     if (comment == null) {
-      return res.status(404).json({ message: 'Cant find the comment' });
+      return res.status(404).json({ msg: 'Comment not found' });
     }
     res.json(comment);
   } catch (error) {
@@ -93,6 +96,10 @@ router.get('/:id/comments/:comment_id', async function(req, res) {
 // @desc        Update a comment
 // @access      Private
 router.put('/:id/comments/:comment_id', auth, async (req, res) => {
+  //is ID valid?
+  if (!req.params.comment_id.match(/^[0-9a-fA-F]{24}$/)) {
+    return res.status(404).json({ msg: 'Comment not found' });
+  }
   const { text } = req.body;
   //Build comment object
   const commentFields = {};
@@ -123,12 +130,16 @@ router.put('/:id/comments/:comment_id', auth, async (req, res) => {
 // @desc        Delete a comment
 // @access      Private
 router.delete('/:id/comments/:comment_id', auth, async (req, res) => {
+  //is ID valid?
+  if (!req.params.comment_id.match(/^[0-9a-fA-F]{24}$/)) {
+    return res.status(404).json({ msg: 'Comment not found' });
+  }
   try {
     let comment = await Comment.findById(req.params.comment_id);
     if (!comment) return res.status(404).json({ msg: 'Comment not found' });
     const user = await User.findById(req.user.id).select('-password');
     //Make sure user owns the campground
-    if (campground.author.toString() !== req.user.id && !user.isAdmin) {
+    if (comment.author.toString() !== req.user.id && !user.isAdmin) {
       return res
         .status(401)
         .json({ msg: 'Not authorized to access this resource' });
