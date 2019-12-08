@@ -18,7 +18,7 @@ router.get('/:id/comments/:comment_id/replies', async (req, res) => {
         model: 'Reply'
       })
       .exec();
-    if (comment.replies == null || comment.replies.length < 1) {
+    if (comment === null) {
       return res.status(404).json({ msg: 'Cant find replies' });
     } else {
       res.json(comment.replies);
@@ -71,10 +71,11 @@ router.post(
 // @route       GET   api/campgrounds/:id/comments/:comments_id/replies/:reply_id
 // @desc        Get a specific reply
 // @access      Public
-router.get('/:id/comments/:comment_id/replies/:reply_id', async function(
-  req,
-  res
-) {
+router.get('/:id/comments/:comment_id/replies/:reply_id', async (req, res) => {
+  //is ID valid?
+  if (!req.params.reply_id.match(/^[0-9a-fA-F]{24}$/)) {
+    return res.status(404).json({ msg: 'Cant find the reply' });
+  }
   try {
     let reply = await Reply.findById(req.params.reply_id);
     if (reply.length < 1) {
@@ -95,6 +96,10 @@ router.put(
   '/:id/comments/:comment_id/replies/:reply_id',
   auth,
   async (req, res) => {
+    //is ID valid?
+    if (!req.params.reply_id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(404).json({ msg: 'Cant find the reply' });
+    }
     const { text } = req.body;
     //Build comment object
     const replyFields = {};
@@ -105,7 +110,7 @@ router.put(
       //Make sure user owns the reply
       const user = await User.findById(req.user.id).select('-password');
       //Make sure user owns the campground
-      if (campground.author.toString() !== req.user.id && !user.isAdmin) {
+      if (reply.author.toString() !== req.user.id && !user.isAdmin) {
         return res
           .status(401)
           .json({ msg: 'Not authorized to access this resource' });
@@ -130,17 +135,25 @@ router.delete(
   '/:id/comments/:comment_id/replies/:reply_id',
   auth,
   async (req, res) => {
+    //is ID valid?
+    if (!req.params.reply_id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(404).json({ msg: 'Cant find the reply' });
+    }
     try {
       let reply = await Reply.findById(req.params.reply_id);
-      if (!reply) return res.status(404).json({ msg: 'Comment not found' });
+      if (!reply) return res.status(404).json({ msg: 'Cant find the reply' });
       //Make sure user own the campground
       const user = await User.findById(req.user.id).select('-password');
       //Make sure user owns the campground
-      if (campground.author.toString() !== req.user.id && !user.isAdmin) {
+      if (reply.author.toString() !== req.user.id && !user.isAdmin) {
         return res
           .status(401)
           .json({ msg: 'Not authorized to access this resource' });
       }
+      await Comment.update(
+        { _id: req.params.comment_id },
+        { $pull: { replies: reply._id } }
+      );
       //delete the reply
       await Reply.findByIdAndRemove(req.params.reply_id);
       res.json({ msg: 'Reply removed successfully!' });

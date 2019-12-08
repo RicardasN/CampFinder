@@ -144,6 +144,10 @@ router.delete('/:id/comments/:comment_id', auth, async (req, res) => {
         .status(401)
         .json({ msg: 'Not authorized to access this resource' });
     }
+    await Campground.update(
+      { _id: req.params.id },
+      { $pull: { comments: comment._id } }
+    );
     // delete all replies associated with the comment
     await Reply.deleteMany({ _id: { $in: comment.replies } });
     //delete the comment itself
