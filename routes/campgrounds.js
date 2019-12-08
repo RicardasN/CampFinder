@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/auth');
 const { check, validationResult } = require('express-validator');
+const isImageUrl = require('is-image-url');
+const auth = require('../middleware/auth');
 
 var Campground = require('../models/Campground');
 var Review = require('../models/Review');
@@ -54,7 +55,10 @@ router.post(
     ]
   ],
   async (req, res) => {
-    const errors = validationResult(req);
+    var errors = validationResult(req);
+    if (!isImageUrl(req.body.image)) {
+      errors.push({ message: 'Given image is not a valid url' });
+    }
     if (!errors.isEmpty()) {
       return res.status(400).json({ error: errors.array() });
     }
@@ -83,25 +87,12 @@ router.post(
 // @access      Public
 router.get('/:id', async function(req, res) {
   try {
-    //is ID valid?
+    // is ID valid?
     if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
       return res.status(404).json({ message: 'Cant find the campground' });
     }
-    //find the campground with provided ID
+    // find the campground with provided ID
     let campground = await Campground.findById(req.params.id);
-    /*.populate({
-        path: 'reviews',
-        options: { sort: { createdAt: -1 } }
-      })
-      .populate({
-        path: 'comments',
-        model: 'Comment',
-        populate: {
-          path: 'comments.replies',
-          model: 'Reply'
-        }
-      })
-      .exec();*/
     if (campground == null) {
       return res.status(404).json({ message: 'Cant find the campground' });
     }
@@ -116,12 +107,12 @@ router.get('/:id', async function(req, res) {
 // @desc        Update a campground
 // @access      Private
 router.put('/:id', auth, async (req, res) => {
-  //is ID valid?
+  // is ID valid?
   if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
     return res.status(404).json({ message: 'Cant find the campground' });
   }
   const { name, image, description, price, location } = req.body;
-  //Build campground object
+  // Build campground object
   const campgroundFields = {};
   if (name) campgroundFields.name = name;
   if (image) campgroundFields.image = image;
@@ -133,7 +124,7 @@ router.put('/:id', auth, async (req, res) => {
     if (!campground)
       return res.status(404).json({ msg: 'Campground not found' });
     const user = await User.findById(req.user.id).select('-password');
-    //Make sure user owns the campground
+    // Make sure user owns the campground
     if (campground.author.toString() !== req.user.id && !user.isAdmin) {
       return res
         .status(401)
@@ -155,7 +146,7 @@ router.put('/:id', auth, async (req, res) => {
 // @desc        Delete a campground
 // @access      Private
 router.delete('/:id', auth, async (req, res) => {
-  //is ID valid?
+  // is ID valid?
   if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
     return res.status(404).json({ message: 'Cant find the campground' });
   }
@@ -164,7 +155,7 @@ router.delete('/:id', auth, async (req, res) => {
     if (!campground)
       return res.status(404).json({ msg: 'Campground not found' });
     const user = await User.findById(req.user.id).select('-password');
-    //Make sure user owns the campground
+    // Make sure user owns the campground
     if (campground.author.toString() !== req.user.id && !user.isAdmin) {
       return res
         .status(401)
@@ -174,7 +165,7 @@ router.delete('/:id', auth, async (req, res) => {
     await Comment.deleteMany({ _id: { $in: campground.comments } });
     // delete all reviews associated with the campground
     await Review.deleteMany({ _id: { $in: campground.reviews } });
-    //delete the campground itself
+    // delete the campground itself
     await Campground.findByIdAndRemove(req.params.id);
     res.json({ msg: 'Campground removed successfully!' });
   } catch (error) {

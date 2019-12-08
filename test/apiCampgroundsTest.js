@@ -1,9 +1,8 @@
-//apiTest.js
 const request = require('supertest');
 const app = require('../app');
 
-var campground;
-//==================== campgrounds API test ====================
+let campground;
+//= =================== campgrounds API test ====================
 
 /**
  * Testing get all campgrounds endpoint
@@ -35,7 +34,7 @@ describe('GET /api/campgrounds/:id', function() {
       .get('/api/campgrounds/idisnonexisting')
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
-      .expect(404) //expecting HTTP status code
+      .expect(404) // expecting HTTP status code
       .expect('{"message":"Cant find the campground"}') // expecting content value
       .end(err => {
         if (err) return done(err);
@@ -61,7 +60,7 @@ describe('POST /api/campgrounds', function() {
         done();
       });
   });
-  let data = {
+  const data = {
     name: 'New Campground from UnitTests',
     image:
       'https://images.unsplash.com/photo-1562620891-080f718db384?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1655&q=80',
@@ -113,7 +112,7 @@ describe('PUT /api/campgrounds/:id', function() {
         done();
       });
   });
-  let data = {
+  const data = {
     name: 'Updated Campground from UnitTests',
     description: 'This is an updated test description',
     price: '21.22',

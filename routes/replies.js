@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/auth');
 const { check, validationResult } = require('express-validator');
+const auth = require('../middleware/auth');
 
 var User = require('../models/User');
 var Reply = require('../models/Reply');
@@ -54,9 +54,9 @@ router.post(
         text,
         author: req.user.id
       });
-      //save reply
+      // save reply
       const reply = await newReply.save();
-      //add replies to comment's replies
+      // add replies to comment's replies
       let comment = await Comment.findById(req.params.comment_id);
       comment.replies.push(reply);
       comment.save();
@@ -72,7 +72,7 @@ router.post(
 // @desc        Get a specific reply
 // @access      Public
 router.get('/:id/comments/:comment_id/replies/:reply_id', async (req, res) => {
-  //is ID valid?
+  // is ID valid?
   if (!req.params.reply_id.match(/^[0-9a-fA-F]{24}$/)) {
     return res.status(404).json({ msg: 'Cant find the reply' });
   }
@@ -96,20 +96,20 @@ router.put(
   '/:id/comments/:comment_id/replies/:reply_id',
   auth,
   async (req, res) => {
-    //is ID valid?
+    // is ID valid?
     if (!req.params.reply_id.match(/^[0-9a-fA-F]{24}$/)) {
       return res.status(404).json({ msg: 'Cant find the reply' });
     }
     const { text } = req.body;
-    //Build comment object
+    // Build comment object
     const replyFields = {};
     if (text) replyFields.text = text;
     try {
       let reply = await Reply.findById(req.params.reply_id);
       if (!reply) return res.status(404).json({ msg: 'Reply not found' });
-      //Make sure user owns the reply
+      // Make sure user owns the reply
       const user = await User.findById(req.user.id).select('-password');
-      //Make sure user owns the campground
+      // Make sure user owns the campground
       if (reply.author.toString() !== req.user.id && !user.isAdmin) {
         return res
           .status(401)
@@ -135,16 +135,16 @@ router.delete(
   '/:id/comments/:comment_id/replies/:reply_id',
   auth,
   async (req, res) => {
-    //is ID valid?
+    // is ID valid?
     if (!req.params.reply_id.match(/^[0-9a-fA-F]{24}$/)) {
       return res.status(404).json({ msg: 'Cant find the reply' });
     }
     try {
       let reply = await Reply.findById(req.params.reply_id);
       if (!reply) return res.status(404).json({ msg: 'Cant find the reply' });
-      //Make sure user own the campground
+      // Make sure user own the campground
       const user = await User.findById(req.user.id).select('-password');
-      //Make sure user owns the campground
+      // Make sure user owns the campground
       if (reply.author.toString() !== req.user.id && !user.isAdmin) {
         return res
           .status(401)
@@ -154,7 +154,7 @@ router.delete(
         { _id: req.params.comment_id },
         { $pull: { replies: reply._id } }
       );
-      //delete the reply
+      // delete the reply
       await Reply.findByIdAndRemove(req.params.reply_id);
       res.json({ msg: 'Reply removed successfully!' });
     } catch (error) {

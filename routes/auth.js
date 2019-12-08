@@ -31,26 +31,26 @@ router.post(
     check('password', 'Password is required').exists()
   ],
   async (req, res) => {
-    //Check if data passed validation
+    // Check if data passed validation
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
     const { email, password } = req.body;
     try {
-      //Does a user with that email exist in the system?
+      // Does a user with that email exist in the system?
       let user = await User.findOne({ email });
-      //If such user does not exist we return an error
+      // If such user does not exist we return an error
       if (!user) {
         return res.status(400).json({ msg: 'Invalid credentials' });
       }
-      //Do password match?
+      // Do password match?
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
         return res.status(400).json({ msg: 'Invalid credentials' });
       }
-      //Everything is ok, lets send a token
-      //Data to send
+      // Everything is ok, lets send a token
+      // Data to send
       const payload = {
         user: {
           id: user.id

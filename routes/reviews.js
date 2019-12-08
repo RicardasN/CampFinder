@@ -21,7 +21,7 @@ router.get('/:id/reviews', async (req, res) => {
     if (campground === null) {
       return res
         .status(404)
-        .json({ message: 'Cant find reviews for the campground' });
+        .json({ msg: 'Cant find reviews for the campground' });
     }
     res.json(campground.reviews);
   } catch (error) {
@@ -72,9 +72,9 @@ router.post(
 // @desc        Get a specific review
 // @access      Public
 router.get('/:id/reviews/:review_id', async function(req, res) {
-  //is ID valid?
+  // is ID valid?
   if (!req.params.review_id.match(/^[0-9a-fA-F]{24}$/)) {
-    return res.status(404).json({ msg: 'Comment not found' });
+    return res.status(404).json({ msg: 'Review not found' });
   }
   try {
     let review = await Review.findById(req.params.review_id);
@@ -93,11 +93,11 @@ router.get('/:id/reviews/:review_id', async function(req, res) {
 // @access      Private
 router.put('/:id/reviews/:review_id', auth, async (req, res) => {
   const { text, rating } = req.body;
-  //is ID valid?
+  // is ID valid?
   if (!req.params.review_id.match(/^[0-9a-fA-F]{24}$/)) {
-    return res.status(404).json({ msg: 'Comment not found' });
+    return res.status(404).json({ msg: 'Review not found' });
   }
-  //Build comment object
+  // Build comment object
   const reviewFields = {};
   if (text) reviewFields.text = text;
   if (rating) reviewFields.rating = rating;
@@ -105,7 +105,7 @@ router.put('/:id/reviews/:review_id', auth, async (req, res) => {
     let review = await Review.findById(req.params.review_id);
     if (!review) return res.status(404).json({ msg: 'Review not found' });
     const user = await User.findById(req.user.id).select('-password');
-    //Make sure user owns the review
+    // Make sure user owns the review
     if (review.author.toString() !== req.user.id && !user.isAdmin) {
       return res
         .status(401)
@@ -127,21 +127,21 @@ router.put('/:id/reviews/:review_id', auth, async (req, res) => {
 // @desc        Delete a review
 // @access      Private
 router.delete('/:id/reviews/:review_id', auth, async (req, res) => {
-  //is ID valid?
+  // is ID valid?
   if (!req.params.review_id.match(/^[0-9a-fA-F]{24}$/)) {
-    return res.status(404).json({ msg: 'Comment not found' });
+    return res.status(404).json({ msg: 'Review not found' });
   }
   try {
     let review = await Review.findById(req.params.review_id);
     if (!review) return res.status(404).json({ msg: 'Review not found' });
     const user = await User.findById(req.user.id).select('-password');
-    //Make sure user owns the review
+    // Make sure user owns the review
     if (review.author.toString() !== req.user.id && !user.isAdmin) {
       return res
         .status(401)
         .json({ msg: 'Not authorized to access this resource' });
     }
-    //delete the review itself
+    // delete the review itself
     await Review.findByIdAndRemove(req.params.review_id);
     res.json({ msg: 'Review removed successfully!' });
   } catch (error) {

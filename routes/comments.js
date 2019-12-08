@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/auth');
 const { check, validationResult } = require('express-validator');
+const auth = require('../middleware/auth');
 
 var Campground = require('../models/Campground');
 var Comment = require('../models/Comment');
@@ -24,9 +24,7 @@ router.get('/:id/comments', async (req, res) => {
       })
       .exec();
     if (campground.comments == null || campground.comments.length < 1) {
-      return res
-        .status(404)
-        .json({ message: 'Cant find comments for the campground' });
+      return res.status(404).json({ msg: 'Comments not found' });
     }
     res.json(campground.comments);
   } catch (error) {
@@ -76,7 +74,7 @@ router.post(
 // @desc        Get a specific comment
 // @access      Public
 router.get('/:id/comments/:comment_id', async function(req, res) {
-  //is ID valid?
+  // is ID valid?
   if (!req.params.comment_id.match(/^[0-9a-fA-F]{24}$/)) {
     return res.status(404).json({ msg: 'Comment not found' });
   }
@@ -96,19 +94,19 @@ router.get('/:id/comments/:comment_id', async function(req, res) {
 // @desc        Update a comment
 // @access      Private
 router.put('/:id/comments/:comment_id', auth, async (req, res) => {
-  //is ID valid?
+  // is ID valid?
   if (!req.params.comment_id.match(/^[0-9a-fA-F]{24}$/)) {
     return res.status(404).json({ msg: 'Comment not found' });
   }
   const { text } = req.body;
-  //Build comment object
+  // Build comment object
   const commentFields = {};
   if (text) commentFields.text = text;
   try {
     let comment = await Comment.findById(req.params.comment_id);
     if (!comment) return res.status(404).json({ msg: 'Comment not found' });
     const user = await User.findById(req.user.id).select('-password');
-    //Make sure user owns the comment
+    // Make sure user owns the comment
     if (comment.author.toString() !== req.user.id && !user.isAdmin) {
       return res
         .status(401)
@@ -130,7 +128,7 @@ router.put('/:id/comments/:comment_id', auth, async (req, res) => {
 // @desc        Delete a comment
 // @access      Private
 router.delete('/:id/comments/:comment_id', auth, async (req, res) => {
-  //is ID valid?
+  // is ID valid?
   if (!req.params.comment_id.match(/^[0-9a-fA-F]{24}$/)) {
     return res.status(404).json({ msg: 'Comment not found' });
   }
@@ -138,7 +136,7 @@ router.delete('/:id/comments/:comment_id', auth, async (req, res) => {
     let comment = await Comment.findById(req.params.comment_id);
     if (!comment) return res.status(404).json({ msg: 'Comment not found' });
     const user = await User.findById(req.user.id).select('-password');
-    //Make sure user owns the campground
+    // Make sure user owns the campground
     if (comment.author.toString() !== req.user.id && !user.isAdmin) {
       return res
         .status(401)
@@ -150,7 +148,7 @@ router.delete('/:id/comments/:comment_id', auth, async (req, res) => {
     );
     // delete all replies associated with the comment
     await Reply.deleteMany({ _id: { $in: comment.replies } });
-    //delete the comment itself
+    // delete the comment itself
     await Comment.findByIdAndRemove(req.params.comment_id);
     res.json({ msg: 'Comment removed successfully!' });
   } catch (error) {
