@@ -1,18 +1,19 @@
 const express = require('express');
-const router = express.Router();
-const auth = require('../middleware/auth');
 const { check, validationResult } = require('express-validator');
+const auth = require('../middleware/auth');
 
-var Campground = require('../models/Campground');
-var Review = require('../models/Review');
-var User = require('../models/User');
+const Campground = require('../models/Campground').default;
+const Review = require('../models/Review');
+const User = require('../models/User');
+
+const router = express.Router();
 
 // @route       GET   api/campgrounds/:id/reviews
 // @desc        Get all campground's reviews
 // @access      Public
 router.get('/:id/reviews', async (req, res) => {
   try {
-    let campground = await Campground.findById(req.params.id)
+    const campground = await Campground.findById(req.params.id)
       .populate({
         path: 'reviews',
         model: 'Review'
@@ -77,7 +78,7 @@ router.get('/:id/reviews/:review_id', async function(req, res) {
     return res.status(404).json({ msg: 'Review not found' });
   }
   try {
-    let review = await Review.findById(req.params.review_id);
+    const review = await Review.findById(req.params.review_id);
     if (review == null) {
       return res.status(404).json({ msg: 'Review not found' });
     }
@@ -132,7 +133,7 @@ router.delete('/:id/reviews/:review_id', auth, async (req, res) => {
     return res.status(404).json({ msg: 'Review not found' });
   }
   try {
-    let review = await Review.findById(req.params.review_id);
+    const review = await Review.findById(req.params.review_id);
     if (!review) return res.status(404).json({ msg: 'Review not found' });
     const user = await User.findById(req.user.id).select('-password');
     // Make sure user owns the review

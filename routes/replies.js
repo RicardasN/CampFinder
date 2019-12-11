@@ -1,18 +1,19 @@
 const express = require('express');
-const router = express.Router();
 const { check, validationResult } = require('express-validator');
 const auth = require('../middleware/auth');
 
-var User = require('../models/User');
-var Reply = require('../models/Reply');
-var Comment = require('../models/Comment');
+const User = require('../models/User');
+const Reply = require('../models/Reply');
+const Comment = require('../models/Comment');
+
+const router = express.Router();
 
 // @route       GET   api/campgrounds/:id/comments/:comments_id/replies
 // @desc        Get all comment's replies
 // @access      Public
 router.get('/:id/comments/:comment_id/replies', async (req, res) => {
   try {
-    let comment = await Comment.findById(req.params.comment_id)
+    const comment = await Comment.findById(req.params.comment_id)
       .populate({
         path: 'replies',
         model: 'Reply'
@@ -57,7 +58,7 @@ router.post(
       // save reply
       const reply = await newReply.save();
       // add replies to comment's replies
-      let comment = await Comment.findById(req.params.comment_id);
+      const comment = await Comment.findById(req.params.comment_id);
       comment.replies.push(reply);
       comment.save();
       res.json(reply);
@@ -77,7 +78,7 @@ router.get('/:id/comments/:comment_id/replies/:reply_id', async (req, res) => {
     return res.status(404).json({ msg: 'Cant find the reply' });
   }
   try {
-    let reply = await Reply.findById(req.params.reply_id);
+    const reply = await Reply.findById(req.params.reply_id);
     if (reply.length < 1) {
       return res.status(404).json({ msg: 'Cant find the reply' });
     } else {
@@ -140,7 +141,7 @@ router.delete(
       return res.status(404).json({ msg: 'Cant find the reply' });
     }
     try {
-      let reply = await Reply.findById(req.params.reply_id);
+      const reply = await Reply.findById(req.params.reply_id);
       if (!reply) return res.status(404).json({ msg: 'Cant find the reply' });
       // Make sure user own the campground
       const user = await User.findById(req.user.id).select('-password');

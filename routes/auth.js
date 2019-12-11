@@ -1,4 +1,5 @@
 const express = require('express');
+
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -39,7 +40,7 @@ router.post(
     const { email, password } = req.body;
     try {
       // Does a user with that email exist in the system?
-      let user = await User.findOne({ email });
+      const user = await User.findOne({ email });
       // If such user does not exist we return an error
       if (!user) {
         return res.status(400).json({ msg: 'Invalid credentials' });

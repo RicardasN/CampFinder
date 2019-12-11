@@ -1,13 +1,13 @@
 const express = require('express');
-const router = express.Router();
 const { check, validationResult } = require('express-validator');
-const isImageUrl = require('is-image-url');
 const auth = require('../middleware/auth');
 
-var Campground = require('../models/Campground');
-var Review = require('../models/Review');
-var Comment = require('../models/Comment');
-var User = require('../models/User');
+const Campground = require('../models/Campground').default;
+const Review = require('../models/Review');
+const Comment = require('../models/Comment');
+const User = require('../models/User');
+
+const router = express.Router();
 
 // @route       GET   api/campgrounds
 // @desc        Get all campgrounds
@@ -55,10 +55,7 @@ router.post(
     ]
   ],
   async (req, res) => {
-    var errors = validationResult(req);
-    if (!isImageUrl(req.body.image)) {
-      errors.push({ message: 'Given image is not a valid url' });
-    }
+    const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ error: errors.array() });
     }
@@ -92,7 +89,7 @@ router.get('/:id', async function(req, res) {
       return res.status(404).json({ message: 'Cant find the campground' });
     }
     // find the campground with provided ID
-    let campground = await Campground.findById(req.params.id);
+    const campground = await Campground.findById(req.params.id);
     if (campground == null) {
       return res.status(404).json({ message: 'Cant find the campground' });
     }
@@ -151,7 +148,7 @@ router.delete('/:id', auth, async (req, res) => {
     return res.status(404).json({ message: 'Cant find the campground' });
   }
   try {
-    let campground = await Campground.findById(req.params.id);
+    const campground = await Campground.findById(req.params.id);
     if (!campground)
       return res.status(404).json({ msg: 'Campground not found' });
     const user = await User.findById(req.user.id).select('-password');

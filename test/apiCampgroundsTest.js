@@ -19,31 +19,6 @@ describe('GET /api/campgrounds', function() {
 });
 
 /**
- * Testing get a campgrounds endpoint by giving an existing campground
- */
-describe('GET /api/campgrounds/:id', function() {
-  it('respond with json containing a single campground', function(done) {
-    request(app)
-      .get('/api/campgrounds/5d99cfdad7d29459b01abce1')
-      .set('Accept', 'application/json')
-      .expect('Content-Type', /json/)
-      .expect(200, done);
-  });
-  it('respond with json campground not found', function(done) {
-    request(app)
-      .get('/api/campgrounds/idisnonexisting')
-      .set('Accept', 'application/json')
-      .expect('Content-Type', /json/)
-      .expect(404) // expecting HTTP status code
-      .expect('{"message":"Cant find the campground"}') // expecting content value
-      .end(err => {
-        if (err) return done(err);
-        done();
-      });
-  });
-});
-
-/**
  * Testing post campgrounds endpoint
  */
 describe('POST /api/campgrounds', function() {
@@ -95,6 +70,32 @@ describe('POST /api/campgrounds', function() {
       });
   });
 });
+
+/**
+ * Testing get a campgrounds endpoint by giving an existing campground
+ */
+describe('GET /api/campgrounds/:id', function() {
+  it('respond with json containing a single campground', function(done) {
+    request(app)
+      .get(`/api/campgrounds/${campground._id}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(200, done);
+  });
+  it('respond with json campground not found', function(done) {
+    request(app)
+      .get('/api/campgrounds/idisnonexisting')
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(404) // expecting HTTP status code
+      .expect('{"message":"Cant find the campground"}') // expecting content value
+      .end(err => {
+        if (err) return done(err);
+        done();
+      });
+  });
+});
+
 /**
  * Testing update campgrounds endpoint
  */

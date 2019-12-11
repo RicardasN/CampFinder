@@ -1,9 +1,9 @@
-//apiTest.js
+// apiTest.js
 const request = require('supertest');
 const app = require('../app');
 
-var review;
-//==================== reviews API test ====================
+let review;
+//= =================== reviews API test ====================
 
 /**
  * Testing get all campground's reviews endpoint
@@ -12,7 +12,7 @@ describe('GET /api/campgrounds/:id/reviews', function() {
   this.timeout(10000);
   it('respond with json containing a list of all reviews for a campground', function(done) {
     request(app)
-      .get('/api/campgrounds/5dd26c12de2aed61ac14db3c/reviews')
+      .get('/api/campgrounds/5df0c3b3bb69ba19804fb4a6/reviews')
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
       .expect(200, done);
@@ -36,13 +36,13 @@ describe('POST /api/campgrounds/:id/reviews', function() {
         done();
       });
   });
-  let data = {
+  const data = {
     rating: 4,
     text: 'New review from UnitTests'
   };
   it('respond with 401 unauthorized', function(done) {
     request(app)
-      .post('/api/campgrounds/5dd26c12de2aed61ac14db3c/reviews')
+      .post('/api/campgrounds/5df0c3b3bb69ba19804fb4a6/reviews')
       .send(data)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
@@ -54,7 +54,7 @@ describe('POST /api/campgrounds/:id/reviews', function() {
   });
   it('respond with 200 ok', function(done) {
     request(app)
-      .post('/api/campgrounds/5dd26c12de2aed61ac14db3c/reviews')
+      .post('/api/campgrounds/5df0c3b3bb69ba19804fb4a6/reviews')
       .set('x-auth-token', token)
       .send(data)
       .set('Accept', 'application/json')
@@ -74,11 +74,11 @@ describe('POST /api/campgrounds/:id/reviews', function() {
 describe('GET /api/campgrounds/:id/reviews/:review_id', function() {
   it('respond with json review not found', function(done) {
     request(app)
-      .get(`/api/campgrounds/5dd26c12de2aed61ac14db3c/reviews/weirdcommentid`)
+      .get(`/api/campgrounds/5df0c3b3bb69ba19804fb4a6/reviews/weirdcommentid`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
-      .expect(404) //expecting HTTP status code
-      .expect('{"msg":"Comment not found"}') // expecting content value
+      .expect(404) // expecting HTTP status code
+      .expect('{"msg":"Review not found"}') // expecting content value
       .end(err => {
         if (err) return done(err);
         done();
@@ -86,7 +86,7 @@ describe('GET /api/campgrounds/:id/reviews/:review_id', function() {
   });
   it(`respond with json containing a single campground's review`, function(done) {
     request(app)
-      .get(`/api/campgrounds/5dd26c12de2aed61ac14db3c/reviews/${review._id}`)
+      .get(`/api/campgrounds/5df0c3b3bb69ba19804fb4a6/reviews/${review._id}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
       .expect(200, done);
@@ -110,13 +110,13 @@ describe('PUT /api/campgrounds/:id/reviews/:review_id', function() {
         done();
       });
   });
-  let data = {
+  const data = {
     text: `Updated Campground's Review from UnitTests`
   };
   it('respond with 404 not found', function(done) {
     request(app)
       .put(
-        `/api/campgrounds/5dd26c12de2aed61ac14db3c/reviews/thisIdDoesNotExist`
+        `/api/campgrounds/5df0c3b3bb69ba19804fb4a6/reviews/thisIdDoesNotExist`
       )
       .set('x-auth-token', token)
       .set('Accept', 'application/json')
@@ -129,7 +129,7 @@ describe('PUT /api/campgrounds/:id/reviews/:review_id', function() {
   });
   it('respond with 401 unauthorized', function(done) {
     request(app)
-      .put(`/api/campgrounds/5dd26c12de2aed61ac14db3c/reviews/${review._id}`)
+      .put(`/api/campgrounds/5df0c3b3bb69ba19804fb4a6/reviews/${review._id}`)
       .send(data)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
@@ -141,7 +141,7 @@ describe('PUT /api/campgrounds/:id/reviews/:review_id', function() {
   });
   it('respond with 200 ok', function(done) {
     request(app)
-      .put(`/api/campgrounds/5dd26c12de2aed61ac14db3c/reviews/${review._id}`)
+      .put(`/api/campgrounds/5df0c3b3bb69ba19804fb4a6/reviews/${review._id}`)
       .set('x-auth-token', token)
       .send(data)
       .set('Accept', 'application/json')
@@ -173,7 +173,7 @@ describe('DELETE /api/campgrounds/:id/reviews/:review_id', function() {
   });
   it('respond with 404 not found', function(done) {
     request(app)
-      .delete(`/api/campgrounds/5dd26c12de2aed61ac14db3c/reviews/notexistingid`)
+      .delete(`/api/campgrounds/5df0c3b3bb69ba19804fb4a6/reviews/notexistingid`)
       .set('x-auth-token', token)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
@@ -185,7 +185,7 @@ describe('DELETE /api/campgrounds/:id/reviews/:review_id', function() {
   });
   it('respond with 401 unauthorized', function(done) {
     request(app)
-      .delete(`/api/campgrounds/5dd26c12de2aed61ac14db3c/reviews/${review._id}`)
+      .delete(`/api/campgrounds/5df0c3b3bb69ba19804fb4a6/reviews/${review._id}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
       .expect(401)
@@ -196,7 +196,7 @@ describe('DELETE /api/campgrounds/:id/reviews/:review_id', function() {
   });
   it('respond with 200 ok', function(done) {
     request(app)
-      .delete(`/api/campgrounds/5dd26c12de2aed61ac14db3c/reviews/${review._id}`)
+      .delete(`/api/campgrounds/5df0c3b3bb69ba19804fb4a6/reviews/${review._id}`)
       .set('x-auth-token', token)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)

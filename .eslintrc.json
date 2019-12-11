@@ -1,6 +1,9 @@
 {
   "extends": ["airbnb", "prettier", "plugin:node/recommended"],
-  "plugins": ["prettier"],
+  "plugins": ["prettier", "my-eslint-rules"],
+  "parserOptions": {
+    "ecmaVersion": 2018
+  },
   "rules": {
     "prettier/prettier": "error",
     "no-unused-vars": "warn",
@@ -11,7 +14,8 @@
     "class-methods-use-this": "off",
     "consistent-return": "off",
     "no-else-return": "off",
-    "no-underscore-dangle": "off"
+    "no-underscore-dangle": "off",
+    "my-eslint-rules/async-func-name": "warn"
   },
   "overrides": [
     {

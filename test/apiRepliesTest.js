@@ -1,9 +1,9 @@
-//apiTest.js
+// apiTest.js
 const request = require('supertest');
 const app = require('../app');
 
-var reply;
-//====================  replies API test ====================
+let reply;
+//= ===================  replies API test ====================
 
 /**
  * Testing get all comment's replies endpoint
@@ -13,7 +13,7 @@ describe('GET /api/campgrounds/:id/comments/:comment_id/replies', function() {
   it('respond with json containing a list of all replies for a comment', function(done) {
     request(app)
       .get(
-        '/api/campgrounds/5dd26e960490e6583cc7f795/comments/5dd26e960490e6583cc7f795/replies'
+        '/api/campgrounds/5dd26c12de2aed61ac14db3c/comments/5df0c5579e4496496c3a3be3/replies'
       )
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
@@ -38,13 +38,13 @@ describe('POST /api/campgrounds/:id/comments/:comment_id/replies', function() {
         done();
       });
   });
-  let data = {
+  const data = {
     text: 'New reply from UnitTests'
   };
   it('respond with 401 unauthorized', function(done) {
     request(app)
       .post(
-        '/api/campgrounds/5dd26e960490e6583cc7f795/comments/5dd26e960490e6583cc7f795/replies'
+        '/api/campgrounds/5dd26c12de2aed61ac14db3c/comments/5df0c5579e4496496c3a3be3/replies'
       )
       .send(data)
       .set('Accept', 'application/json')
@@ -58,7 +58,7 @@ describe('POST /api/campgrounds/:id/comments/:comment_id/replies', function() {
   it('respond with 200 ok, reply was inserted into database', function(done) {
     request(app)
       .post(
-        '/api/campgrounds/5dd26e960490e6583cc7f795/comments/5dd26e960490e6583cc7f795/replies'
+        '/api/campgrounds/5dd26c12de2aed61ac14db3c/comments/5df0c5579e4496496c3a3be3/replies'
       )
       .set('x-auth-token', token)
       .send(data)
@@ -81,11 +81,11 @@ describe('GET /api/campgrounds/:id/comments/:comment_id/replies/:reply_id', func
   it('respond with json reply not found', function(done) {
     request(app)
       .get(
-        `/api/campgrounds/5dd26e960490e6583cc7f795/comments/5dd26e960490e6583cc7f795/replies/whatisthisID`
+        `/api/campgrounds/5dd26c12de2aed61ac14db3c/comments/5df0c5579e4496496c3a3be3/replies/whatisthisID`
       )
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
-      .expect(404) //expecting HTTP status code
+      .expect(404) // expecting HTTP status code
       .expect('{"msg":"Cant find the reply"}') // expecting content value
       .end(err => {
         if (err) return done(err);
@@ -95,7 +95,7 @@ describe('GET /api/campgrounds/:id/comments/:comment_id/replies/:reply_id', func
   it(`respond with json containing a single reply`, function(done) {
     request(app)
       .get(
-        `/api/campgrounds/5dd26e960490e6583cc7f795/comments/5dd26e960490e6583cc7f795/replies/${reply._id}`
+        `/api/campgrounds/5dd26c12de2aed61ac14db3c/comments/5df0c5579e4496496c3a3be3/replies/${reply._id}`
       )
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
@@ -120,13 +120,13 @@ describe('PUT /api/campgrounds/:id/comments/:comment_id/replies/:reply_id', func
         done();
       });
   });
-  let data = {
+  const data = {
     text: `Updated Comment's reply from UnitTests`
   };
   it('respond with 404 not found', function(done) {
     request(app)
       .put(
-        `/api/campgrounds/5dd26e960490e6583cc7f795/comments/5dd26e960490e6583cc7f795/replies/weirdcommentid`
+        `/api/campgrounds/5dd26c12de2aed61ac14db3c/comments/5df0c5579e4496496c3a3be3/replies/weirdcommentid`
       )
       .set('x-auth-token', token)
       .set('Accept', 'application/json')
@@ -140,7 +140,7 @@ describe('PUT /api/campgrounds/:id/comments/:comment_id/replies/:reply_id', func
   it('respond with 401 unauthorized', function(done) {
     request(app)
       .put(
-        `/api/campgrounds/5dd26e960490e6583cc7f795/comments/5dd26e960490e6583cc7f795/replies/${reply._id}`
+        `/api/campgrounds/5dd26c12de2aed61ac14db3c/comments/5df0c5579e4496496c3a3be3/replies/${reply._id}`
       )
       .send(data)
       .set('Accept', 'application/json')
@@ -154,7 +154,7 @@ describe('PUT /api/campgrounds/:id/comments/:comment_id/replies/:reply_id', func
   it('respond with 200 ok', function(done) {
     request(app)
       .put(
-        `/api/campgrounds/5dd26e960490e6583cc7f795/comments/5dd26e960490e6583cc7f795/replies/${reply._id}`
+        `/api/campgrounds/5dd26c12de2aed61ac14db3c/comments/5df0c5579e4496496c3a3be3/replies/${reply._id}`
       )
       .set('x-auth-token', token)
       .send(data)
@@ -188,7 +188,7 @@ describe('DELETE /api/campgrounds/:id/comments/:comment_id/replies/:reply_id', f
   it('respond with 404 not found', function(done) {
     request(app)
       .delete(
-        `/api/campgrounds/5dd26e960490e6583cc7f795/comments/5dd26e960490e6583cc7f795/replies/somestrangeID`
+        `/api/campgrounds/5dd26c12de2aed61ac14db3c/comments/5df0c5579e4496496c3a3be3/replies/somestrangeID`
       )
       .set('x-auth-token', token)
       .set('Accept', 'application/json')
@@ -202,7 +202,7 @@ describe('DELETE /api/campgrounds/:id/comments/:comment_id/replies/:reply_id', f
   it('respond with 401 unauthorized', function(done) {
     request(app)
       .delete(
-        `/api/campgrounds/5dd26e960490e6583cc7f795/comments/5dd26e960490e6583cc7f795/replies/${reply._id}`
+        `/api/campgrounds/5dd26c12de2aed61ac14db3c/comments/5df0c5579e4496496c3a3be3/replies/${reply._id}`
       )
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
@@ -215,7 +215,7 @@ describe('DELETE /api/campgrounds/:id/comments/:comment_id/replies/:reply_id', f
   it('respond with 200 ok', function(done) {
     request(app)
       .delete(
-        `/api/campgrounds/5dd26e960490e6583cc7f795/comments/5dd26e960490e6583cc7f795/replies/${reply._id}`
+        `/api/campgrounds/5dd26c12de2aed61ac14db3c/comments/5df0c5579e4496496c3a3be3/replies/${reply._id}`
       )
       .set('x-auth-token', token)
       .set('Accept', 'application/json')

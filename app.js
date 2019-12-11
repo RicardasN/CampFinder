@@ -1,5 +1,5 @@
 const express = require('express');
-const connectDB = require('./config/db').connectDB;
+const { connectDB } = require('./config/db');
 
 const authRoutes = require('./routes/auth');
 const usersRoutes = require('./routes/users');
@@ -13,8 +13,8 @@ const app = express();
 // Connect Database
 connectDB();
 
-//Init Middleware
-//Bodyparser
+// Init Middleware
+// Bodyparser
 app.use(express.json({ extended: false }));
 
 // Define Routes

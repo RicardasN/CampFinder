@@ -1,19 +1,20 @@
 const express = require('express');
-const router = express.Router();
 const { check, validationResult } = require('express-validator');
 const auth = require('../middleware/auth');
 
-var Campground = require('../models/Campground');
-var Comment = require('../models/Comment');
-var Reply = require('../models/Reply');
-var User = require('../models/User');
+const Campground = require('../models/Campground').default;
+const Comment = require('../models/Comment');
+const Reply = require('../models/Reply');
+const User = require('../models/User');
+
+const router = express.Router();
 
 // @route       GET   api/campgrounds/:id/comments
 // @desc        Get all campground's comments
 // @access      Public
 router.get('/:id/comments', async (req, res) => {
   try {
-    let campground = await Campground.findById(req.params.id)
+    const campground = await Campground.findById(req.params.id)
       .populate({
         path: 'comments',
         model: 'Comment',
@@ -59,7 +60,7 @@ router.post(
         author: req.user.id
       });
       const comment = await newComment.save();
-      let campground = await Campground.findById(req.params.id);
+      const campground = await Campground.findById(req.params.id);
       campground.comments.push(comment);
       campground.save();
       res.json(comment);
@@ -79,7 +80,7 @@ router.get('/:id/comments/:comment_id', async function(req, res) {
     return res.status(404).json({ msg: 'Comment not found' });
   }
   try {
-    let comment = await Comment.findById(req.params.comment_id);
+    const comment = await Comment.findById(req.params.comment_id);
     if (comment == null) {
       return res.status(404).json({ msg: 'Comment not found' });
     }
@@ -133,7 +134,7 @@ router.delete('/:id/comments/:comment_id', auth, async (req, res) => {
     return res.status(404).json({ msg: 'Comment not found' });
   }
   try {
-    let comment = await Comment.findById(req.params.comment_id);
+    const comment = await Comment.findById(req.params.comment_id);
     if (!comment) return res.status(404).json({ msg: 'Comment not found' });
     const user = await User.findById(req.user.id).select('-password');
     // Make sure user owns the campground
