@@ -5,8 +5,12 @@
   "main": "app.js",
   "scripts": {
     "server": "nodemon app.js",
-    "start": "node ./bin/www",
-    "test": "mocha --recursive --exit"
+    "start": "node app.js",
+    "test": "mocha --recursive --exit",
+    "client": "npm start --prefix client",
+    "client-install": "npm install --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
   },
   "author": "Ricardas Noreika",
   "license": "ISC",
