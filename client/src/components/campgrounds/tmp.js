@@ -30,6 +30,8 @@ export class ContentContainer extends Component {
       trackPage();
     }
   };
+
+  //className={campground.rating > 1.5 ? 'fa fa-star': 'fa fa-star-o'}
   render() {
     const { categories, isLoading, error } = this.props;
     const slug = this.props.match.params.slug;

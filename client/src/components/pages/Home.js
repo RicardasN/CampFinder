@@ -13,6 +13,8 @@ export const Home = () => {
   }, []);
   return (
     <div className="container" style={{ width: '90%' }}>
+      <AddButton />
+      <AddCampgroundModal />
       <Campgrounds />
     </div>
   );

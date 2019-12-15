@@ -2,7 +2,7 @@ const express = require('express');
 const { check, validationResult } = require('express-validator');
 const auth = require('../middleware/auth');
 
-const Campground = require('../models/Campground').default;
+const Campground = require('../models/Campground');
 const Review = require('../models/Review');
 const User = require('../models/User');
 
@@ -62,9 +62,19 @@ router.post(
         author: req.user.id
       });
       const review = await newReview.save();
+
+      const campground = await Campground.findById(req.params.id).populate(
+        'reviews'
+      );
+      campground.reviews.push(review);
+      const campRating = await calculateAverage(campground.reviews);
+      campground.rating = campRating;
+      await campground.save();
+
       res.json(review);
     } catch (error) {
-      res.status(500).json('Server Error');
+      console.error(error.message);
+      res.status(500).send('Server Error');
     }
   }
 );
@@ -117,6 +127,11 @@ router.put('/:id/reviews/:review_id', auth, async (req, res) => {
       { $set: reviewFields },
       { new: true }
     );
+    const campground = await Campground.findById(req.params.id);
+    const campRating = await calculateAverage(campground.reviews);
+    campground.rating = campRating;
+    await campground.save();
+
     res.json(review);
   } catch (error) {
     console.error(error.message);
@@ -142,6 +157,17 @@ router.delete('/:id/reviews/:review_id', auth, async (req, res) => {
         .status(401)
         .json({ msg: 'Not authorized to access this resource' });
     }
+    // Handle review in a campground
+    const campground = await Campground.findByIdAndUpdate(
+      req.params.id,
+      { $pull: { reviews: req.params.review_id } },
+      { new: true }
+    ).populate('reviews');
+    // recalculate campground average
+    const campRating = await calculateAverage(campground.reviews);
+    campground.rating = campRating;
+    //save changes
+    campground.save();
     // delete the review itself
     await Review.findByIdAndRemove(req.params.review_id);
     res.json({ msg: 'Review removed successfully!' });
@@ -150,5 +176,16 @@ router.delete('/:id/reviews/:review_id', auth, async (req, res) => {
     res.status(500).send('Server Error');
   }
 });
+
+const calculateAverage = async reviews => {
+  if (reviews.length === 0) {
+    return 0;
+  }
+  var sum = 0;
+  reviews.forEach(element => {
+    sum += element.rating;
+  });
+  return sum / reviews.length;
+};
 
 module.exports = router;

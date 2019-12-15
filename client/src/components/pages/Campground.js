@@ -1,5 +1,7 @@
 import React, { useEffect, Fragment } from 'react';
 import { useParams } from 'react-router';
+import Comments from '../comments/Comments';
+import Reviews from '../ratings/Reviews';
 
 const Campground = () => {
   let { id } = useParams();
@@ -52,50 +54,8 @@ const Campground = () => {
           </div>
         </div>
       </div>
-      <div className="row">
-        <div className="col s12">
-          <div className="card-panel grey lighten-3">
-            <div className="row">
-              <div className="col s12 m6">
-                <h5>
-                  <i className="fas fa-comment-alt"></i> Comments
-                </h5>
-              </div>
-              <div className="col s12 m6">
-                <a className="waves-effect waves-light teal btn right white-text">
-                  <i
-                    className="fas fa-plus"
-                    aria-hidden="true"
-                    style={{ fontSize: '1rem' }}
-                  ></i>{' '}
-                  Add a comment
-                </a>
-              </div>
-            </div>
-            <div className="divider"></div>
-            <div className="row">
-              <div className="section">
-                <h6>
-                  <i className="fas fa-user" /> User
-                  <span className="right" style={{ fontSize: '1rem' }}>
-                    10 days ago
-                  </span>
-                </h6>
-                <p>This is the first comment on this page</p>
-              </div>
-              <div className="section">
-                <h6>
-                  <i className="fas fa-user" /> User
-                  <span className="right" style={{ fontSize: '1rem' }}>
-                    10 days ago
-                  </span>
-                </h6>
-                <p>This is the second comment on this page</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Reviews />
+      <Comments />
     </div>
   );
 };
