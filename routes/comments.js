@@ -2,7 +2,7 @@ const express = require('express');
 const { check, validationResult } = require('express-validator');
 const auth = require('../middleware/auth');
 
-const Campground = require('../models/Campground').default;
+const Campground = require('../models/Campground');
 const Comment = require('../models/Comment');
 const Reply = require('../models/Reply');
 const User = require('../models/User');

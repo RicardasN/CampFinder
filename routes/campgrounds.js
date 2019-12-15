@@ -2,7 +2,7 @@ const express = require('express');
 const { check, validationResult } = require('express-validator');
 const auth = require('../middleware/auth');
 
-const Campground = require('../models/Campground').default;
+const Campground = require('../models/Campground');
 const Review = require('../models/Review');
 const Comment = require('../models/Comment');
 const User = require('../models/User');
@@ -89,7 +89,20 @@ router.get('/:id', async function(req, res) {
       return res.status(404).json({ message: 'Cant find the campground' });
     }
     // find the campground with provided ID
-    const campground = await Campground.findById(req.params.id);
+    const campground = await Campground.findById(req.params.id)
+      .populate({
+        path: 'reviews',
+        populate: {
+          path: 'author'
+        }
+      })
+      .populate({
+        path: 'comments',
+        populate: {
+          path: 'author'
+        }
+      })
+      .populate('author');
     if (campground == null) {
       return res.status(404).json({ message: 'Cant find the campground' });
     }

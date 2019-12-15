@@ -2,13 +2,7 @@ import React from 'react';
 import CommentItem from './CommentItem';
 import AddCommentModal from '../comments/AddCommentModal';
 
-const Comments = () => {
-  const comment = {
-    author: 'User',
-    text: 'This is a very interesting comment text',
-    createdAt: '2019-10-19T12:59-0500'
-  };
-
+const Comments = ({ comments }) => {
   return (
     <div className="row">
       <div className="col s12">
@@ -36,7 +30,13 @@ const Comments = () => {
           </div>
           <div className="divider" />
           <div className="row">
-            <CommentItem comment={comment} />
+            {comments && comments.length > 0 ? (
+              comments.map(comment => (
+                <CommentItem comment={comment} key={comment._id} />
+              ))
+            ) : (
+              <p>No comments as of yet</p>
+            )}
           </div>
         </div>
       </div>

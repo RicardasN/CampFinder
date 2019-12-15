@@ -1,6 +1,4 @@
 import React, { useState, useContext } from 'react';
-import M from 'materialize-css/dist/js/materialize.min.js';
-import isImageUrl from 'is-image-url';
 import Alerts from '../layout/Alerts';
 import AlertContext from '../../context/alert/alertContext';
 

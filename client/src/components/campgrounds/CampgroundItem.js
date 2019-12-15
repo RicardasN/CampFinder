@@ -1,21 +1,18 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-const CampgroundItem = () => {
+const CampgroundItem = ({ campground: { name, image, description, _id } }) => {
   return (
     <div className="card">
       <div className="card-image">
-        <img src="https://images.unsplash.com/photo-1575948864484-583bc327e60a?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1350&q=80" />
-        <span className="card-title">Card Title</span>
+        <img src={`${image}`} alt="campground" />
+        <span className="card-title">{name}</span>
       </div>
       <div className="card-content">
-        <p>
-          I am a very simple card. I am good at containing small bits of
-          information. I am convenient because I require little markup to use
-          effectively.
-        </p>
+        <p>{description.substring(0, 40)}...</p>
       </div>
       <div className="card-action">
-        <a href="#">This is a link</a>
+        <Link to={`/campgrounds/${_id}`}>View</Link>
       </div>
     </div>
   );

@@ -3,117 +3,115 @@ import axios from 'axios';
 import CampgroundContext from './campgroundContext';
 import campgroundReducer from './campgroundReducer';
 import {
-  ADD_CONTACT,
-  DELETE_CONTACT,
-  SET_CURRENT,
-  CLEAR_CURRENT,
-  UPDATE_CONTACT,
-  FILTER_CONTACTS,
-  CLEAR_FILTER,
-  CONTACT_ERROR,
-  GET_CONTACTS,
-  CLEAR_CONTACTS
+  GET_CAMPGROUND,
+  GET_CAMPGROUNDS,
+  ADD_CAMPGROUND,
+  DELETE_CAMPGROUND,
+  SET_CURRENT_CAMPGROUND,
+  CLEAR_CURRENT_CAMPGROUND,
+  UPDATE_CAMPGROUND,
+  CAMPGROUND_ERROR,
+  SET_LOADING
 } from '../types';
 
 const CampgroundState = props => {
   const initialState = {
-    contacts: null,
+    campgrounds: null,
     current: null,
-    filtered: null,
+    loading: true,
     error: null
   };
   //state lets us access object in our state and dispatch allows us to dispatch objects to the reducer
   const [state, dispatch] = useReducer(campgroundReducer, initialState);
 
-  //Get Contacts
-  const getContacts = async () => {
+  //Get Campgrounds
+  const getCampgrounds = async () => {
     try {
-      const res = await axios.get('/api/contacts');
-      dispatch({ type: GET_CONTACTS, payload: res.data });
+      dispatch({ type: SET_LOADING });
+      const res = await axios.get('/api/campgrounds');
+      dispatch({ type: GET_CAMPGROUNDS, payload: res.data });
     } catch (error) {
-      dispatch({ type: CONTACT_ERROR, payload: error.response.msg });
+      dispatch({ type: CAMPGROUND_ERROR, payload: error.response.msg });
     }
   };
 
-  //Add Contact
-  const addContact = async contact => {
+  //Get Campground
+  const getCampground = async id => {
+    try {
+      dispatch({ type: SET_LOADING });
+      const res = await axios.get(`/api/campgrounds/${id}`);
+      dispatch({ type: GET_CAMPGROUND, payload: res.data });
+    } catch (error) {
+      dispatch({ type: CAMPGROUND_ERROR, payload: error.response.msg });
+    }
+  };
+
+  //Add Campground
+  const addCampground = async campgroundData => {
     const config = {
       headers: {
         'Content-Type': 'application/json'
       }
     };
     try {
-      const res = await axios.post('/api/contacts', contact, config);
-      dispatch({ type: ADD_CONTACT, payload: res.data });
+      dispatch({ type: SET_LOADING });
+      const res = await axios.post('/api/campgrounds', campgroundData, config);
+      dispatch({ type: ADD_CAMPGROUND, payload: res.data });
     } catch (error) {
-      dispatch({ type: CONTACT_ERROR, payload: error.response.msg });
+      dispatch({ type: CAMPGROUND_ERROR, payload: error.response.msg });
     }
   };
-  //Delete Contact
-  const deleteContact = async id => {
+  //Delete Campground
+  const deleteCampground = async id => {
     try {
-      await axios.delete(`/api/contacts/${id}`);
-      dispatch({ type: DELETE_CONTACT, payload: id });
+      dispatch({ type: SET_LOADING });
+      await axios.delete(`/api/campgrounds/${id}`);
+      dispatch({ type: DELETE_CAMPGROUND, payload: id });
     } catch (error) {
-      dispatch({ type: CONTACT_ERROR, payload: error.response.msg });
+      dispatch({ type: CAMPGROUND_ERROR, payload: error.response.msg });
     }
   };
-  //Update Contact
-  const updateContact = async contact => {
+  //Update Campground
+  const updateCampground = async campground => {
     const config = {
       headers: {
         'Content-Type': 'application/json'
       }
     };
     try {
+      dispatch({ type: SET_LOADING });
       const res = await axios.put(
-        `/api/contacts/${contact._id}`,
-        contact,
+        `/api/campgrounds/${campground._id}`,
+        campground,
         config
       );
-      dispatch({ type: UPDATE_CONTACT, payload: res.data });
+      dispatch({ type: UPDATE_CAMPGROUND, payload: res.data });
     } catch (error) {
-      dispatch({ type: CONTACT_ERROR, payload: error.response.msg });
+      dispatch({ type: CAMPGROUND_ERROR, payload: error.response.msg });
     }
   };
-  //Set Current Contact
-  const setCurrent = contact => {
-    dispatch({ type: SET_CURRENT, payload: contact });
+  //Set Current Campground
+  const setCurrentCampground = campground => {
+    dispatch({ type: SET_CURRENT_CAMPGROUND, payload: campground });
   };
-  //Clear Current Contact
-  const clearCurrent = () => {
-    dispatch({ type: CLEAR_CURRENT });
-  };
-  //Filter Contacts
-  const filterContacts = text => {
-    dispatch({ type: FILTER_CONTACTS, payload: text });
-  };
-  //Clear Filter
-  const clearFiltered = () => {
-    dispatch({ type: CLEAR_FILTER });
-  };
-  //Clear Contacts from state
-  //Otherwise once another user logins on the same browser before getContacts is completed he can
-  //see another person's contacts...
-  const clearContacts = () => {
-    dispatch({ type: CLEAR_CONTACTS });
+  //Clear Current Campground
+  const clearCurrentCampground = () => {
+    dispatch({ type: CLEAR_CURRENT_CAMPGROUND });
   };
   return (
     <CampgroundContext.Provider
       value={{
-        contacts: state.contacts,
+        campgrounds: state.campgrounds,
         current: state.current,
-        filtered: state.filtered,
+        loading: state.loading,
         error: state.error,
-        addContact,
-        deleteContact,
-        setCurrent,
-        clearCurrent,
-        updateContact,
-        clearFiltered,
-        filterContacts,
-        getContacts,
-        clearContacts
+        getCampgrounds,
+        getCampground,
+        addCampground,
+        deleteCampground,
+        updateCampground,
+        setCurrentCampground,
+        clearCurrentCampground
       }}
     >
       {props.children}

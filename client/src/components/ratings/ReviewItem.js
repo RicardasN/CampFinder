@@ -12,7 +12,7 @@ const ReviewItem = ({ review: { text, author, rating } }) => {
           )
         )}
         <div style={{ display: 'inline', marginLeft: '10px' }}>
-          Review by: <span className="teal-text">{author}</span>
+          Review by: <span className="teal-text">{author.name}</span>
         </div>
         <p>{text}</p>
       </span>

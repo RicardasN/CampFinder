@@ -7,7 +7,7 @@ import About from './components/pages/About';
 import Register from './components/auth/Register';
 import Login from './components/auth/Login';
 
-import ContactState from './context/contact/ContactState';
+import CampgroundState from './context/campground/campgroundState';
 import AuthState from './context/auth/AuthState';
 import AlertState from './context/alert/AlertState';
 import setAuthToken from './utils/setAuthToken';
@@ -15,7 +15,6 @@ import setAuthToken from './utils/setAuthToken';
 import 'materialize-css/dist/css/materialize.min.css';
 import M from 'materialize-css/dist/js/materialize.min.js';
 import './App.css';
-import Campgrounds from './components/campgrounds/Campgrounds';
 
 if (localStorage.token) {
   setAuthToken(localStorage.token);
@@ -30,7 +29,7 @@ const App = () => {
 
   return (
     <AuthState>
-      <ContactState>
+      <CampgroundState>
         <AlertState>
           <Router>
             <Fragment>
@@ -45,7 +44,7 @@ const App = () => {
             </Fragment>
           </Router>
         </AlertState>
-      </ContactState>
+      </CampgroundState>
     </AuthState>
   );
 };

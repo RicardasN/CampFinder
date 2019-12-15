@@ -1,12 +1,13 @@
 import React, { useState, useContext } from 'react';
-import M from 'materialize-css/dist/js/materialize.min.js';
-import isImageUrl from 'is-image-url';
 import Alerts from '../layout/Alerts';
 import AlertContext from '../../context/alert/alertContext';
+import CampgroundContext from '../../context/campground/campgroundContext';
 
 const AddCampgroundModal = () => {
   const alertContext = useContext(AlertContext);
+  const campgroundContext = useContext(CampgroundContext);
   const { setAlert } = alertContext;
+  const { addCampground } = campgroundContext;
 
   const [name, setName] = useState('');
   const [image, setImage] = useState('');
@@ -15,9 +16,7 @@ const AddCampgroundModal = () => {
   const [description, setDescription] = useState('');
 
   const onSubmit = () => {
-    if (!isImageUrl(image)) {
-      setAlert('Given image is not a valid url', 'danger');
-    } else if (
+    if (
       name === '' &&
       image === '' &&
       price === '' &&
@@ -25,6 +24,13 @@ const AddCampgroundModal = () => {
       description === ''
     ) {
       setAlert('Please fill in all the required fields', 'danger');
+    } else {
+      addCampground({ name, image, price, location, description });
+      setName('');
+      setImage('');
+      setPrice(0);
+      setLocation('');
+      setDescription('');
     }
   };
 
@@ -99,7 +105,7 @@ const AddCampgroundModal = () => {
       </div>
       <div className="modal-footer">
         <a
-          className="waves-effect waves-light btn-large"
+          className="waves-effect waves-light btn teal"
           href="#!"
           onClick={onSubmit}
         >
@@ -111,8 +117,8 @@ const AddCampgroundModal = () => {
 };
 
 const modalStyle = {
-  width: '75%',
-  height: '75%'
+  width: '85%',
+  height: '85%'
 };
 
 export default AddCampgroundModal;

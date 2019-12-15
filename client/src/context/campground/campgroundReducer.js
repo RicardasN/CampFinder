@@ -1,80 +1,68 @@
 import {
-  ADD_CONTACT,
-  DELETE_CONTACT,
-  SET_CURRENT,
-  CLEAR_CURRENT,
-  UPDATE_CONTACT,
-  FILTER_CONTACTS,
-  CLEAR_FILTER,
-  CONTACT_ERROR,
-  GET_CONTACTS,
-  CLEAR_CONTACTS
+  GET_CAMPGROUND,
+  GET_CAMPGROUNDS,
+  ADD_CAMPGROUND,
+  DELETE_CAMPGROUND,
+  SET_CURRENT_CAMPGROUND,
+  CLEAR_CURRENT_CAMPGROUND,
+  UPDATE_CAMPGROUND,
+  CAMPGROUND_ERROR,
+  SET_LOADING
 } from '../types';
 
 export default (state, action) => {
   switch (action.type) {
-    case GET_CONTACTS:
+    case GET_CAMPGROUNDS:
       return {
         ...state,
-        contacts: action.payload,
+        campgrounds: action.payload,
         loading: false
       };
-    case ADD_CONTACT:
+    case GET_CAMPGROUND:
       return {
         ...state,
-        contacts: [action.payload, ...state.contacts],
+        current: action.payload,
         loading: false
       };
-    case UPDATE_CONTACT:
+    case ADD_CAMPGROUND:
       return {
         ...state,
-        contacts: state.contacts.map(contact =>
-          contact._id === action.payload._id ? action.payload : contact
+        campgrounds: [action.payload, ...state.campgrounds],
+        loading: false
+      };
+    case UPDATE_CAMPGROUND:
+      return {
+        ...state,
+        campgrounds: state.campgrounds.map(campground =>
+          campground._id === action.payload._id ? action.payload : campground
         ),
         loading: false,
         current: null
       };
-    case DELETE_CONTACT:
+    case DELETE_CAMPGROUND:
       return {
         ...state,
-        contacts: state.contacts.filter(
-          contact => contact._id !== action.payload
+        campgrounds: state.campgrounds.filter(
+          campground => campground._id !== action.payload
         ),
         loading: false
       };
-    case SET_CURRENT:
+    case SET_CURRENT_CAMPGROUND:
       return {
         ...state,
         current: action.payload
       };
-    case CLEAR_CURRENT:
+    case CLEAR_CURRENT_CAMPGROUND:
       return {
         ...state,
         current: null
       };
-    case FILTER_CONTACTS:
+    case SET_LOADING:
       return {
         ...state,
-        filtered: state.contacts.filter(contact => {
-          //global and case insensitive
-          const regex = new RegExp(`${action.payload}`, 'gi');
-          return contact.name.match(regex) || contact.email.match(regex);
-        })
+        loading: true
       };
-    case CLEAR_FILTER:
-      return {
-        ...state,
-        filtered: null
-      };
-    case CLEAR_CONTACTS:
-      return {
-        ...state,
-        contacts: null,
-        filtered: null,
-        error: null,
-        current: null
-      };
-    case CONTACT_ERROR:
+    case CAMPGROUND_ERROR:
       return {
         ...state,
         error: action.payload
