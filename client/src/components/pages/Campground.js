@@ -69,7 +69,7 @@ const Campground = () => {
             rating={current.rating}
             campgroundID={id}
           />
-          <Comments comments={current.comments} />
+          <Comments campId={id} />
         </Fragment>
       ) : (
         <Preloader />

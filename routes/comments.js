@@ -17,14 +17,12 @@ router.get('/:id/comments', async (req, res) => {
     const campground = await Campground.findById(req.params.id)
       .populate({
         path: 'comments',
-        model: 'Comment',
         populate: {
-          path: 'comments.replies',
-          model: 'Reply'
+          path: 'author'
         }
       })
       .exec();
-    if (campground.comments == null || campground.comments.length < 1) {
+    if (campground.comments === null) {
       return res.status(404).json({ msg: 'Comments not found' });
     }
     res.json(campground.comments);
@@ -50,7 +48,7 @@ router.post(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ error: errors.array() });
+      return res.status(400).json({ error: errors.array()[0].msg });
     }
     const { text } = req.body;
 

@@ -1,5 +1,5 @@
 import { createContext } from 'react';
 
-const campgroundContext = createContext();
+const commentContext = createContext();
 
-export default campgroundContext;
+export default commentContext;

@@ -1,55 +1,57 @@
 import React, { useReducer } from 'react';
 import axios from 'axios';
-import CampgroundContext from './campgroundContext';
-import campgroundReducer from './campgroundReducer';
+import CommentContext from './commentContext';
+import commentReducer from './commentReducer';
 import {
-  GET_CAMPGROUND,
-  GET_CAMPGROUNDS,
-  ADD_CAMPGROUND,
-  DELETE_CAMPGROUND,
-  SET_CURRENT_CAMPGROUND,
-  CLEAR_CURRENT_CAMPGROUND,
-  UPDATE_CAMPGROUND,
-  CAMPGROUND_ERROR,
+  GET_COMMENTS,
+  GET_COMMENT,
+  ADD_COMMENT,
+  DELETE_COMMENT,
+  SET_CURRENT_COMMENT,
+  CLEAR_CURRENT_COMMENT,
+  UPDATE_COMMENT,
+  COMMENT_ERROR,
   SET_LOADING,
   CLEAR_ERRORS
 } from '../types';
 
-const CampgroundState = props => {
+const CommentState = props => {
   const initialState = {
-    campgrounds: null,
+    comments: null,
     current: null,
     loading: true,
     error: null
   };
   //state lets us access object in our state and dispatch allows us to dispatch objects to the reducer
-  const [state, dispatch] = useReducer(campgroundReducer, initialState);
+  const [state, dispatch] = useReducer(commentReducer, initialState);
 
-  //Get Campgrounds
-  const getCampgrounds = async () => {
+  //Get Comments
+  const getComments = async campgroundId => {
     try {
       dispatch({ type: SET_LOADING });
-      const res = await axios.get('/api/campgrounds');
-      dispatch({ type: GET_CAMPGROUNDS, payload: res.data });
+      const res = await axios.get(`/api/campgrounds/${campgroundId}/comments`);
+      dispatch({ type: GET_COMMENTS, payload: res.data });
     } catch (error) {
-      dispatch({ type: CAMPGROUND_ERROR, payload: error.response.msg });
+      dispatch({ type: COMMENT_ERROR, payload: error.response.msg });
     }
   };
 
-  //Get Campground
-  const getCampground = async id => {
+  //Get Comment
+  const getComment = async (campgroundId, id) => {
     try {
       dispatch({ type: SET_LOADING });
-      const res = await axios.get(`/api/campgrounds/${id}`);
-      dispatch({ type: GET_CAMPGROUND, payload: res.data });
+      const res = await axios.get(
+        `/api/campgrounds/${campgroundId}/comments/${id}`
+      );
+      dispatch({ type: GET_COMMENT, payload: res.data });
     } catch (error) {
       console.log(error);
-      dispatch({ type: CAMPGROUND_ERROR, payload: error.response.msg });
+      dispatch({ type: COMMENT_ERROR, payload: error.response.msg });
     }
   };
 
-  //Add Campground
-  const addCampground = async campgroundData => {
+  //Add Comment
+  const addComment = async (campgroundId, commentData) => {
     const config = {
       headers: {
         'Content-Type': 'application/json'
@@ -57,24 +59,28 @@ const CampgroundState = props => {
     };
     try {
       dispatch({ type: SET_LOADING });
-      const res = await axios.post('/api/campgrounds', campgroundData, config);
-      dispatch({ type: ADD_CAMPGROUND, payload: res.data });
+      const res = await axios.post(
+        `/api/campgrounds/${campgroundId}/comments`,
+        commentData,
+        config
+      );
+      dispatch({ type: ADD_COMMENT, payload: res.data });
     } catch (error) {
-      dispatch({ type: CAMPGROUND_ERROR, payload: error.response.data.error });
+      dispatch({ type: COMMENT_ERROR, payload: error.response.data.msg });
     }
   };
-  //Delete Campground
-  const deleteCampground = async id => {
+  //Delete Comment
+  const deleteComment = async (campgroundId, id) => {
     try {
       dispatch({ type: SET_LOADING });
-      await axios.delete(`/api/campgrounds/${id}`);
-      dispatch({ type: DELETE_CAMPGROUND, payload: id });
+      await axios.delete(`/api/campgrounds/${campgroundId}/comments/${id}`);
+      dispatch({ type: DELETE_COMMENT, payload: id });
     } catch (error) {
-      dispatch({ type: CAMPGROUND_ERROR, payload: error.response.msg });
+      dispatch({ type: COMMENT_ERROR, payload: error.response.msg });
     }
   };
-  //Update Campground
-  const updateCampground = async campground => {
+  //Update Comment
+  const updateComment = async (campgroundId, commentData) => {
     const config = {
       headers: {
         'Content-Type': 'application/json'
@@ -83,45 +89,45 @@ const CampgroundState = props => {
     try {
       dispatch({ type: SET_LOADING });
       const res = await axios.put(
-        `/api/campgrounds/${campground._id}`,
-        campground,
+        `/api/campgrounds/${campgroundId}/comments/${commentData._id}`,
+        commentData,
         config
       );
-      dispatch({ type: UPDATE_CAMPGROUND, payload: res.data });
+      dispatch({ type: UPDATE_COMMENT, payload: res.data });
     } catch (error) {
-      dispatch({ type: CAMPGROUND_ERROR, payload: error.response.statusText });
+      dispatch({ type: COMMENT_ERROR, payload: error.response.statusText });
     }
   };
   // Clear Errors
   const clearErrors = () => dispatch({ type: CLEAR_ERRORS });
-  //Set Current Campground
-  const setCurrentCampground = campground => {
-    dispatch({ type: SET_CURRENT_CAMPGROUND, payload: campground });
+  //Set Current Comment
+  const setCurrentComment = campground => {
+    dispatch({ type: SET_CURRENT_COMMENT, payload: campground });
   };
-  //Clear Current Campground
-  const clearCurrentCampground = () => {
-    dispatch({ type: CLEAR_CURRENT_CAMPGROUND });
+  //Clear Current Comment
+  const clearCurrentComment = () => {
+    dispatch({ type: CLEAR_CURRENT_COMMENT });
   };
   return (
-    <CampgroundContext.Provider
+    <CommentContext.Provider
       value={{
-        campgrounds: state.campgrounds,
+        comments: state.comments,
         current: state.current,
         loading: state.loading,
         error: state.error,
-        getCampgrounds,
-        getCampground,
-        addCampground,
-        deleteCampground,
-        updateCampground,
-        setCurrentCampground,
-        clearCurrentCampground,
+        getComments,
+        getComment,
+        addComment,
+        deleteComment,
+        updateComment,
+        setCurrentComment,
+        clearCurrentComment,
         clearErrors
       }}
     >
       {props.children}
-    </CampgroundContext.Provider>
+    </CommentContext.Provider>
   );
 };
 
-export default CampgroundState;
+export default CommentState;

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import Alerts from '../layout/Alerts';
 import AlertContext from '../../context/alert/alertContext';
 import CommentContext from '../../context/comment/commentContext';
@@ -14,19 +14,26 @@ const hide = {
   display: 'none'
 };
 
-const AddCommentModal = ({ toggle, setToggle, campgroundId }) => {
+const EditCommentModal = ({ toggle, setToggle, campgroundId }) => {
   const alertContext = useContext(AlertContext);
   const commentContext = useContext(CommentContext);
   const { setAlert } = alertContext;
-  const { addComment } = commentContext;
+  const { updateComment, current } = commentContext;
 
   const [text, setText] = useState('');
+
+  useEffect(() => {
+    if (current) {
+      setText(current.text);
+    }
+  }, [current]);
 
   const onSubmit = () => {
     if (text === '') {
       setAlert('Comment cannot be empty', 'danger');
     } else {
-      addComment(campgroundId, { text });
+      current.text = text;
+      updateComment(campgroundId, current);
       setText('');
       setToggle(!toggle);
     }
@@ -34,7 +41,7 @@ const AddCommentModal = ({ toggle, setToggle, campgroundId }) => {
 
   return (
     <div
-      id="add-comment-modal"
+      id="edit-comment-modal"
       className="modal"
       style={toggle ? display : hide}
     >
@@ -68,4 +75,4 @@ const AddCommentModal = ({ toggle, setToggle, campgroundId }) => {
   );
 };
 
-export default AddCommentModal;
+export default EditCommentModal;

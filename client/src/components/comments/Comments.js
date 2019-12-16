@@ -1,8 +1,26 @@
-import React from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import CommentItem from './CommentItem';
 import AddCommentModal from '../comments/AddCommentModal';
+import CommentContext from '../../context/comment/commentContext';
+import AlertContext from '../../context/alert/alertContext';
 
-const Comments = ({ comments }) => {
+const Comments = ({ campId }) => {
+  const commentContext = useContext(CommentContext);
+  const alertContext = useContext(AlertContext);
+
+  const { getComments, comments, error, clearErrors } = commentContext;
+  const { setAlert } = alertContext;
+
+  useEffect(() => {
+    getComments(campId);
+    if (error !== null && typeof error != 'undefined') {
+      setAlert(error, 'danger');
+      clearErrors();
+    }
+  }, [error, comments, campId]);
+
+  const [toggleModal, setToggleModal] = useState(false);
+
   return (
     <div className="row">
       <div className="col s12">
@@ -17,6 +35,9 @@ const Comments = ({ comments }) => {
               <a
                 className="waves-effect waves-light teal btn right white-text modal-trigger"
                 href="#add-comment-modal"
+                onClick={() => {
+                  setToggleModal(!toggleModal);
+                }}
               >
                 <i
                   className="fas fa-plus"
@@ -25,14 +46,22 @@ const Comments = ({ comments }) => {
                 ></i>{' '}
                 Add a comment
               </a>
-              <AddCommentModal />
+              <AddCommentModal
+                toggle={toggleModal}
+                setToggle={setToggleModal}
+                campgroundId={campId}
+              />
             </div>
           </div>
           <div className="divider" />
           <div className="row">
             {comments && comments.length > 0 ? (
               comments.map(comment => (
-                <CommentItem comment={comment} key={comment._id} />
+                <CommentItem
+                  comment={comment}
+                  key={comment._id}
+                  campgroundId={campId}
+                />
               ))
             ) : (
               <p>No comments as of yet</p>
