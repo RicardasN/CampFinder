@@ -11,6 +11,7 @@ import CampgroundState from './context/campground/campgroundState';
 import AuthState from './context/auth/AuthState';
 import AlertState from './context/alert/AlertState';
 import CommentState from './context/comment/CommentState';
+import ReviewState from './context/review/ReviewState';
 import setAuthToken from './utils/setAuthToken';
 
 import 'materialize-css/dist/css/materialize.min.css';
@@ -32,20 +33,26 @@ const App = () => {
     <AuthState>
       <CampgroundState>
         <CommentState>
-          <AlertState>
-            <Router>
-              <Fragment>
-                <Navbar title="Camp Finder" icon="fas fa-campground" />
-                <Switch>
-                  <Route exact path="/" component={Home} />
-                  <Route exact path="/campgrounds/:id" component={Campground} />
-                  <Route exact path="/about" component={About} />
-                  <Route exact path="/register" component={Register} />
-                  <Route exact path="/login" component={Login} />
-                </Switch>
-              </Fragment>
-            </Router>
-          </AlertState>
+          <ReviewState>
+            <AlertState>
+              <Router>
+                <Fragment>
+                  <Navbar title="Camp Finder" icon="fas fa-campground" />
+                  <Switch>
+                    <Route exact path="/" component={Home} />
+                    <Route
+                      exact
+                      path="/campgrounds/:id"
+                      component={Campground}
+                    />
+                    <Route exact path="/about" component={About} />
+                    <Route exact path="/register" component={Register} />
+                    <Route exact path="/login" component={Login} />
+                  </Switch>
+                </Fragment>
+              </Router>
+            </AlertState>
+          </ReviewState>
         </CommentState>
       </CampgroundState>
     </AuthState>

@@ -1,4 +1,4 @@
-import React, { useContext, Fragment, useEffect, useState } from 'react';
+import React, { useContext, Fragment, useState } from 'react';
 import { Link } from 'react-router-dom';
 import EditCampgroundModal from './EditCampgroundModal';
 import AuthContext from '../../context/auth/authContext';

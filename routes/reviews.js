@@ -16,7 +16,9 @@ router.get('/:id/reviews', async (req, res) => {
     const campground = await Campground.findById(req.params.id)
       .populate({
         path: 'reviews',
-        model: 'Review'
+        populate: {
+          path: 'author'
+        }
       })
       .exec();
     if (campground === null) {
@@ -51,7 +53,7 @@ router.post(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ error: errors.array() });
+      return res.status(400).json({ error: errors.array()[0].msg });
     }
     const { text, rating } = req.body;
 
@@ -127,7 +129,9 @@ router.put('/:id/reviews/:review_id', auth, async (req, res) => {
       { $set: reviewFields },
       { new: true }
     );
-    const campground = await Campground.findById(req.params.id);
+    const campground = await Campground.findById(req.params.id).populate(
+      'reviews'
+    );
     const campRating = await calculateAverage(campground.reviews);
     campground.rating = campRating;
     await campground.save();

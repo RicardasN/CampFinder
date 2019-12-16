@@ -148,9 +148,4 @@ const EditCampgroundModal = ({ toggle, setToggle }) => {
   );
 };
 
-const modalStyle = {
-  width: '75%',
-  height: '75%'
-};
-
 export default EditCampgroundModal;

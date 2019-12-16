@@ -1,10 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import ReviewItem from './ReviewItem';
 import AddReviewModal from './AddReviewModal';
+import ReviewContext from '../../context/review/reviewContext';
+import AlertContext from '../../context/alert/alertContext';
 
-const Reviews = ({ reviews, rating, campgroundID }) => {
+const Reviews = ({ rating, campgroundID }) => {
+  const context = useContext(ReviewContext);
+  const alertContext = useContext(AlertContext);
+
+  const { reviews, getReviews, error, clearErrors } = context;
+  const { setAlert } = alertContext;
+
   const [toggleModal, setToggleModal] = useState(false);
+
+  useEffect(() => {
+    getReviews(campgroundID);
+    if (error !== null && typeof error != 'undefined') {
+      setAlert(error, 'danger');
+      clearErrors();
+    }
+    // eslint-disable-next-line
+  }, [error, reviews, campgroundID, rating]);
 
   return (
     <div className="row">
@@ -21,7 +38,7 @@ const Reviews = ({ reviews, rating, campgroundID }) => {
                     <span className="far fa-star" key={ratingValue} />
                   )
                 )}
-                <em>(total reviews: {reviews.length})</em>
+                <em>(total reviews: {reviews ? reviews.length : 0})</em>
               </p>
               <p>
                 Current campground rating: <strong>{rating.toFixed(2)}</strong>
@@ -52,10 +69,10 @@ const Reviews = ({ reviews, rating, campgroundID }) => {
                 {reviews.map(review => (
                   <CSSTransition
                     key={review._id}
-                    timeout={500}
+                    timeout={1000}
                     classNames="section"
                   >
-                    <ReviewItem review={review} />
+                    <ReviewItem review={review} campgroundId={campgroundID} />
                   </CSSTransition>
                 ))}
               </TransitionGroup>

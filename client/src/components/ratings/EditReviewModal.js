@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import Alerts from '../layout/Alerts';
 import AlertContext from '../../context/alert/alertContext';
 import ReviewContext from '../../context/review/reviewContext';
@@ -14,14 +14,21 @@ const hide = {
   display: 'none'
 };
 
-const AddReviewModal = ({ toggle, setToggle, campgroundID }) => {
+const EditReviewModal = ({ toggle, setToggle, campgroundId }) => {
   const alertContext = useContext(AlertContext);
   const reviewContext = useContext(ReviewContext);
   const { setAlert } = alertContext;
-  const { addReview } = reviewContext;
+  const { updateReview, current } = reviewContext;
 
   const [text, setText] = useState('');
   const [rating, setRating] = useState(0);
+
+  useEffect(() => {
+    if (current) {
+      setText(current.text);
+      setRating(current.rating);
+    }
+  }, [current]);
 
   const onSubmit = () => {
     if (text === '') {
@@ -29,7 +36,8 @@ const AddReviewModal = ({ toggle, setToggle, campgroundID }) => {
     } else if (rating === 0) {
       setAlert('Please select a rating for your review', 'danger');
     } else {
-      addReview(campgroundID, { text, rating });
+      const { _id } = current;
+      updateReview(campgroundId, { _id, rating, text });
       setText('');
       setRating(0);
       setToggle(!toggle);
@@ -38,12 +46,12 @@ const AddReviewModal = ({ toggle, setToggle, campgroundID }) => {
 
   return (
     <div
-      id="add-review-modal"
+      id="edit-review-modal"
       className="modal"
       style={toggle ? display : hide}
     >
       <div className="modal-content">
-        <h4>Add a review</h4>
+        <h4>Edit a review</h4>
         <Alerts />
         <div className="row">
           <p>
@@ -136,16 +144,18 @@ const AddReviewModal = ({ toggle, setToggle, campgroundID }) => {
               </span>
             </label>
           </p>
-          <div className="input-field">
-            <input
-              type="text"
-              name="text"
-              value={text}
-              onChange={e => setText(e.target.value)}
-            />
-            <label htmlFor="name" className="active">
-              Comment about your choice of rating
-            </label>
+          <div className="row">
+            <div className="input-field">
+              <input
+                type="text"
+                name="text"
+                value={text}
+                onChange={e => setText(e.target.value)}
+              />
+              <label htmlFor="name" className="active">
+                Comment about your choice of rating
+              </label>
+            </div>
           </div>
         </div>
         <div className="modal-footer">
@@ -162,4 +172,4 @@ const AddReviewModal = ({ toggle, setToggle, campgroundID }) => {
   );
 };
 
-export default AddReviewModal;
+export default EditReviewModal;

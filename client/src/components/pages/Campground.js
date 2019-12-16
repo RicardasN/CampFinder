@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState, Fragment } from 'react';
+import React, { useEffect, useContext, Fragment } from 'react';
 import { useParams } from 'react-router';
 import Moment from 'react-moment';
 import Comments from '../comments/Comments';
@@ -7,10 +7,12 @@ import Preloader from '../layout/Preloader';
 import Alerts from '../layout/Alerts';
 import CampgroundContext from '../../context/campground/campgroundContext';
 import AlertContext from '../../context/alert/alertContext';
+import AuthContext from '../../context/auth/authContext';
 
 const Campground = () => {
   const alertContext = useContext(AlertContext);
   const context = useContext(CampgroundContext);
+  const authContext = useContext(AuthContext);
 
   const { setAlert } = alertContext;
   let { id } = useParams();
@@ -19,6 +21,7 @@ const Campground = () => {
 
   useEffect(() => {
     getCampground(id);
+    authContext.loadUser();
     if (error !== null && typeof error != 'undefined') {
       setAlert(error, 'danger');
       clearErrors();

@@ -17,6 +17,7 @@ const Comments = ({ campId }) => {
       setAlert(error, 'danger');
       clearErrors();
     }
+    // eslint-disable-next-line
   }, [error, comments, campId]);
 
   const [toggleModal, setToggleModal] = useState(false);

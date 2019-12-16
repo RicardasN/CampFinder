@@ -1,5 +1,5 @@
 import { createContext } from 'react';
 
-const commentContext = createContext();
+const reviewContext = createContext();
 
-export default commentContext;
+export default reviewContext;
