@@ -2,7 +2,18 @@ import React, { useState, useContext } from 'react';
 import Alerts from '../layout/Alerts';
 import AlertContext from '../../context/alert/alertContext';
 
-const AddReviewModal = () => {
+const display = {
+  zIndex: '1003',
+  display: 'block',
+  opacity: '1',
+  top: '10%',
+  transform: 'scaleX(1) scaleY(1)'
+};
+const hide = {
+  display: 'none'
+};
+
+const AddReviewModal = ({ toggle, setToggle, campgroundID }) => {
   const alertContext = useContext(AlertContext);
   const { setAlert } = alertContext;
 
@@ -18,11 +29,16 @@ const AddReviewModal = () => {
       console.log({ text, rating });
       setText('');
       setRating(0);
+      setToggle(!toggle);
     }
   };
 
   return (
-    <div id="add-review-modal" className="modal">
+    <div
+      id="add-review-modal"
+      className="modal"
+      style={toggle ? display : hide}
+    >
       <div className="modal-content">
         <h4>Add a review</h4>
         <Alerts />

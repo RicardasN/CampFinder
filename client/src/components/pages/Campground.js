@@ -1,22 +1,33 @@
-import React, { useEffect, useContext, Fragment } from 'react';
+import React, { useEffect, useContext, useState, Fragment } from 'react';
 import { useParams } from 'react-router';
 import Moment from 'react-moment';
 import Comments from '../comments/Comments';
 import Reviews from '../ratings/Reviews';
 import Preloader from '../layout/Preloader';
+import Alerts from '../layout/Alerts';
 import CampgroundContext from '../../context/campground/campgroundContext';
+import AlertContext from '../../context/alert/alertContext';
 
 const Campground = () => {
-  let { id } = useParams();
+  const alertContext = useContext(AlertContext);
   const context = useContext(CampgroundContext);
-  const { getCampground, current, loading } = context;
+
+  const { setAlert } = alertContext;
+  let { id } = useParams();
+
+  const { getCampground, current, loading, error, clearErrors } = context;
 
   useEffect(() => {
     getCampground(id);
+    if (error !== null && typeof error != 'undefined') {
+      setAlert(error, 'danger');
+      clearErrors();
+    }
     // eslint-disable-next-line
-  }, []);
+  }, [error]);
   return (
     <div className="container">
+      <Alerts />
       {current && !loading ? (
         <Fragment>
           <div className="row">
@@ -53,7 +64,11 @@ const Campground = () => {
               </div>
             </div>
           </div>
-          <Reviews reviews={current.reviews} rating={current.rating} />
+          <Reviews
+            reviews={current.reviews}
+            rating={current.rating}
+            campgroundID={id}
+          />
           <Comments comments={current.comments} />
         </Fragment>
       ) : (

@@ -57,7 +57,7 @@ router.post(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ error: errors.array() });
+      return res.status(400).json({ error: errors.array()[0].msg });
     }
     const { name, image, description, price, location } = req.body;
 

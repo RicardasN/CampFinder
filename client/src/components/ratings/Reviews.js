@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import ReviewItem from './ReviewItem';
 import AddReviewModal from './AddReviewModal';
 
-const Reviews = ({ reviews, rating }) => {
+const Reviews = ({ reviews, rating, campgroundID }) => {
+  const [toggleModal, setToggleModal] = useState(false);
+
   return (
     <div className="row">
       <div className="col s12">
@@ -28,19 +31,34 @@ const Reviews = ({ reviews, rating }) => {
               <a
                 className="waves-effect waves-light teal btn right white-text modal-trigger"
                 href="#add-review-modal"
+                onClick={() => {
+                  setToggleModal(!toggleModal);
+                }}
               >
                 <i className="fas fa-plus" style={{ fontSize: '1rem' }}></i> Add
                 a review
               </a>
             </div>
-            <AddReviewModal />
+            <AddReviewModal
+              toggle={toggleModal}
+              setToggle={setToggleModal}
+              campgroundID={campgroundID}
+            />
           </div>
           <div className="divider" />
           <div className="row">
             {reviews && reviews.length > 0 ? (
-              reviews.map(review => (
-                <ReviewItem review={review} key={review._id} />
-              ))
+              <TransitionGroup>
+                {reviews.map(review => (
+                  <CSSTransition
+                    key={review._id}
+                    timeout={500}
+                    classNames="section"
+                  >
+                    <ReviewItem review={review} />
+                  </CSSTransition>
+                ))}
+              </TransitionGroup>
             ) : (
               <p>No reviews as of yet</p>
             )}

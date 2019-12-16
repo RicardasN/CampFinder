@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import Alerts from '../layout/Alerts';
 import AlertContext from '../../context/alert/alertContext';
 import CampgroundContext from '../../context/campground/campgroundContext';
@@ -7,7 +7,7 @@ const AddCampgroundModal = () => {
   const alertContext = useContext(AlertContext);
   const campgroundContext = useContext(CampgroundContext);
   const { setAlert } = alertContext;
-  const { addCampground } = campgroundContext;
+  const { addCampground, error, clearErrors } = campgroundContext;
 
   const [name, setName] = useState('');
   const [image, setImage] = useState('');
@@ -15,12 +15,20 @@ const AddCampgroundModal = () => {
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
 
+  useEffect(() => {
+    if (error !== null && typeof error != 'undefined') {
+      setAlert(error, 'danger');
+      clearErrors();
+    }
+    // eslint-disable-next-line
+  }, [error]);
+
   const onSubmit = () => {
     if (
-      name === '' &&
-      image === '' &&
-      price === '' &&
-      location === '' &&
+      name === '' ||
+      image === '' ||
+      price === 0 ||
+      location === '' ||
       description === ''
     ) {
       setAlert('Please fill in all the required fields', 'danger');
@@ -117,8 +125,8 @@ const AddCampgroundModal = () => {
 };
 
 const modalStyle = {
-  width: '85%',
-  height: '85%'
+  width: '75%',
+  height: '75%'
 };
 
 export default AddCampgroundModal;
