@@ -10,8 +10,6 @@ const CampgroundSchema = new mongoose.Schema({
     default: Date.now
   },
   location: String,
-  lat: Number,
-  lng: Number,
   author: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'

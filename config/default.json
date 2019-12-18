@@ -1,5 +1,5 @@
 {
-  "mongoURI": "mongodb://localhost/yelp-camp",
+  "mongoURI": "mongodb+srv://Camper:camp123@campdb-rbjq8.mongodb.net/test?retryWrites=true&w=majority",
   "jwtSecret": "JsonWebTokenPaslaptis",
   "GeocoderKey": "AIzaSyC1vTDSMK8kcRbEk6nVBIAUQJ9OXbNd5uE",
   "CloundinaryKey": "135638759793746",
