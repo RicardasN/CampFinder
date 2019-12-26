@@ -18,7 +18,8 @@ router.get('/:id/comments', async (req, res) => {
       .populate({
         path: 'comments',
         populate: {
-          path: 'author'
+          path: 'author',
+          select: '-password -__v -date -email'
         }
       })
       .exec();

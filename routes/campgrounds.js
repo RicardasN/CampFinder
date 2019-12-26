@@ -15,8 +15,8 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const campgrounds = await Campground.find({}).sort({ createdAt: -1 });
-    if (campgrounds == null) {
-      return res.status(404).json({ message: 'Cant find any campgrounds' });
+    if (campgrounds === null) {
+      return res.status(404).json({ msg: 'Cant find any campgrounds' });
     }
     res.json(campgrounds);
   } catch (error) {
@@ -86,25 +86,27 @@ router.get('/:id', async function(req, res) {
   try {
     // is ID valid?
     if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
-      return res.status(404).json({ message: 'Cant find the campground' });
+      return res.status(404).json({ msg: 'Cant find the campground' });
     }
     // find the campground with provided ID
     const campground = await Campground.findById(req.params.id)
       .populate({
         path: 'reviews',
         populate: {
-          path: 'author'
+          path: 'author',
+          select: '-password -__v -date -email'
         }
       })
       .populate({
         path: 'comments',
         populate: {
-          path: 'author'
+          path: 'author',
+          select: '-password -__v -date -email'
         }
       })
       .populate('author');
     if (campground == null) {
-      return res.status(404).json({ message: 'Cant find the campground' });
+      return res.status(404).json({ msg: 'Cant find the campground' });
     }
     res.json(campground);
   } catch (error) {
@@ -119,7 +121,7 @@ router.get('/:id', async function(req, res) {
 router.put('/:id', auth, async (req, res) => {
   // is ID valid?
   if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
-    return res.status(404).json({ message: 'Cant find the campground' });
+    return res.status(404).json({ msg: 'Cant find the campground' });
   }
   const { name, image, description, price, location } = req.body;
   // Build campground object
@@ -158,7 +160,7 @@ router.put('/:id', auth, async (req, res) => {
 router.delete('/:id', auth, async (req, res) => {
   // is ID valid?
   if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
-    return res.status(404).json({ message: 'Cant find the campground' });
+    return res.status(404).json({ msg: 'Cant find the campground' });
   }
   try {
     const campground = await Campground.findById(req.params.id);

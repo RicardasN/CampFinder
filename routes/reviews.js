@@ -17,7 +17,8 @@ router.get('/:id/reviews', async (req, res) => {
       .populate({
         path: 'reviews',
         populate: {
-          path: 'author'
+          path: 'author',
+          select: '-password -__v -date -email'
         }
       })
       .exec();
